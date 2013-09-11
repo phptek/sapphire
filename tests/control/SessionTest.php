@@ -108,4 +108,46 @@ class SessionTest extends SapphireTest {
 		$s2 = new Session($s);
 		$this->assertNotEquals($s2->inst_get('val'), 123);
 	}
+	
+	/*
+	 * Tests that different string values persist across multiple "page requests"
+	 */
+	public function testStringValuePersistsAcrossRequests() {
+		// Visit a random controller URL
+		$r1 = Director::test('dev/tasks?test=1');
+		// Test a string _with_ value
+		Session::set('something', 'exists');
+		// Visit another
+		$r2 = Director::test('dev/tasks?test=2');
+		$this->assertEquals('exists', Session::get('something'), 'Assert that a non-empty string as a session-value, perists across requests.');
+		
+		// Visit a random controller URL
+		$r1 = Director::test('dev/tasks?test=3');
+		// Test a string _without_ value
+		Session::set('something', '');
+		// Visit another
+		$r2 = Director::test('dev/tasks?test=4');
+		$this->assertEquals('', Session::get('something'), 'Assert that an empty string as a session-value, perists across requests.');
+	}
+	
+	/*
+	 * Tests that different array values persist across multiple "page requests"
+	 */
+	public function testArrayValuePersistsAcrossRequests() {
+		// Visit a random controller URL
+		$r1 = Director::test('dev/tasks?test=1');
+		// Test a string _with_ value
+		Session::set('something', array('exists'));
+		// Visit another
+		$r2 = Director::test('dev/tasks?test=2');
+		$this->assertEquals(array('exists'), Session::get('something'), 'Assert that a non-empty array as a session-value, perists across requests.');
+		
+		// Visit a random controller URL
+		$r1 = Director::test('dev/tasks?test=3');
+		// Test a string _without_ value
+		Session::set('something', array());
+		// Visit another
+		$r2 = Director::test('dev/tasks?test=4');
+		$this->assertEquals(array(), Session::get('something'), 'Assert that an empty array as a session-value, perists across requests.');
+	}
 }
