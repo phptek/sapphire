@@ -7,7 +7,7 @@
  * @subpackage tests
  */
 
-class SessionTest extends SapphireTest {
+class SessionTest extends FunctionalTest {
 	
 	public function testGetSetBasics() {
 		Session::set('Test', 'Test');
@@ -113,41 +113,70 @@ class SessionTest extends SapphireTest {
 	 * Tests that different string values persist across multiple "page requests"
 	 */
 	public function testStringValuePersistsAcrossRequests() {
-		// Visit a random controller URL
-		$r1 = Director::test('dev/tasks?test=1');
-		// Test a string _with_ value
-		Session::set('something', 'exists');
-		// Visit another
-		$r2 = Director::test('dev/tasks?test=2');
-		$this->assertEquals('exists', Session::get('something'), 'Assert that a non-empty string as a session-value, perists across requests.');
+		$s = new Session('something');
 		
 		// Visit a random controller URL
-		$r1 = Director::test('dev/tasks?test=3');
+		$this->get('/dev/tasks?test=1', $s);
+		// Test a string _with_ value
+		$s::set('something', 'exists');
+		// Visit another
+		$this->get('/dev/tasks?test=2', $s);
+		$this->assertEquals('exists', $s::get('something'), 'Assert that a non-empty string persists across 1st additional request.');
+		// Visit another
+		$this->get('/dev/tasks?test=3', $s);
+		$this->assertEquals('exists', $s::get('something'), 'Assert that a non-empty string persists across 2nd additional request.');		
+		
+		// Visit a random controller URL
+		$this->get('/dev/tasks?test=1', $s);
 		// Test a string _without_ value
 		Session::set('something', '');
 		// Visit another
-		$r2 = Director::test('dev/tasks?test=4');
-		$this->assertEquals('', Session::get('something'), 'Assert that an empty string as a session-value, perists across requests.');
+		$this->get('/dev/tasks?test=2', $s);
+		$this->assertEquals('', $s::get('something'), 'Assert that an empty string persists across 1st additional request.');
+		// Visit another
+		$this->get('/dev/tasks?test=3', $s);
+		$this->assertEquals('', $s::get('something'), 'Assert that an empty string persists across 2nd additional request.');		
 	}
 	
 	/*
 	 * Tests that different array values persist across multiple "page requests"
 	 */
 	public function testArrayValuePersistsAcrossRequests() {
-		// Visit a random controller URL
-		$r1 = Director::test('dev/tasks?test=1');
-		// Test a string _with_ value
-		Session::set('something', array('exists'));
-		// Visit another
-		$r2 = Director::test('dev/tasks?test=2');
-		$this->assertEquals(array('exists'), Session::get('something'), 'Assert that a non-empty array as a session-value, perists across requests.');
+		$s = new Session('something');	
 		
 		// Visit a random controller URL
-		$r1 = Director::test('dev/tasks?test=3');
-		// Test a string _without_ value
+		$this->get('/dev/tasks?test=1', $s);
+		// Test an array with a single value
+		$s::set('something', array('exists'));
+		// Visit another
+		$this->get('/dev/tasks?test=2', $s);
+		$this->assertEquals(array('exists'), $s::get('something'), 'Assert that a non-empty array persists across 1st additional request.');
+		// Visit another
+		$this->get('/dev/tasks?test=3', $s);
+		$this->assertEquals(array('exists'), $s::get('something'), 'Assert that a non-empty array persists across 2nd additional request.');		
+		
+		// Visit a random controller URL
+		$this->get('/dev/tasks?test=1', $s);
+		// Test an array without a single value
 		Session::set('something', array());
 		// Visit another
-		$r2 = Director::test('dev/tasks?test=4');
-		$this->assertEquals(array(), Session::get('something'), 'Assert that an empty array as a session-value, perists across requests.');
+		$this->get('/dev/tasks?test=2', $s);
+		$this->assertEquals(array(), $s::get('something'), 'Assert that an empty array persists across 1st additional request.');
+		// Visit another
+		$this->get('/dev/tasks?test=3', $s);
+		$this->assertEquals(array(), $s::get('something'), 'Assert that an empty array persists across 2nd additional request.');
+		
+		// Visit a random controller URL
+		$this->get('/dev/tasks?test=1', $s);
+		// Test an array with multiple values
+		$s::set('something', array(1,2,3));
+		// Visit another
+		$this->get('/dev/tasks?test=2', $s);
+		$this->assertEquals(array(1,2,3), $s::get('something'), 'Assert that a multi-value array persists across 1st additional request.');
+		// Now modify the session-value
+		Session::set('something', array(1,2));
+		// Visit another
+		$this->get('/dev/tasks?test=3', $s);
+		$this->assertEquals(array(1,2), $s::get('something'), 'Assert that a multi-value array, changed part-way through a string of 2 requests, persists across additional requests.');
 	}
 }

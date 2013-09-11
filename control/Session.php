@@ -483,12 +483,12 @@ class Session {
 	 */	
 	protected function recursivelyApply($data, &$dest) {
 		foreach($data as $k => $v) {
-			if(is_array($v) && count($v) >0) {
-				if(!isset($dest[$k]) || !is_array($dest[$k])) $dest[$k] = array();
-				$this->recursivelyApply($v, $dest[$k]);
-			} else {
-				$dest[$k] = $v;
-			}
+			if(is_array($v)) {
+				if(!isset($dest[$k]) || !is_array($dest[$k])) {
+					$dest[$k] = array();
+				}
+			} 
+			$dest[$k] = $v;
 		}
 	}
 
