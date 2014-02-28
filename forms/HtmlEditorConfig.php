@@ -290,9 +290,11 @@ class HtmlEditorConfig {
 	
 	/**
 	 * Generate the javascript that will set tinyMCE's configuration to that of the current settings of this object
-	 * @return string - the javascript
+	 * 
+	 * @param boolean | null $inline add config data as JSON into a data-attribute on the target <textarea> element
+	 * @return string - the javascript/JSON
 	 */
-	public function generateJS() {
+	public function generateJS($inline = null) {
 		$config = $this->settings;
 		
 		// plugins
@@ -314,6 +316,10 @@ class HtmlEditorConfig {
 		
 		foreach ($this->buttons as $i=>$buttons) {
 			$config['theme_advanced_buttons'.$i] = implode(',', $buttons);
+		}
+		
+		if($inline) {
+			return Convert::raw2json($config);			
 		}
 		
 		return "

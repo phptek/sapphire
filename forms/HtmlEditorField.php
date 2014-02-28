@@ -29,6 +29,12 @@ class HtmlEditorField extends TextareaField {
 	protected $rows = 30;
 	
 	/**
+	 * @config
+	 * @var mixed (null | boolean)
+	 */
+	protected $inline;
+	
+	/**
 	 * Includes the JavaScript neccesary for this field to work using the {@link Requirements} system.
 	 */
 	public static function include_js() {
@@ -58,9 +64,9 @@ class HtmlEditorField extends TextareaField {
 	/**
 	 * @see TextareaField::__construct()
 	 */
-	public function __construct($name, $title = null, $value = '') {
+	public function __construct($name, $title = null, $value = '', $inline = null) {
 		parent::__construct($name, $title, $value);
-		
+		$this->inline = $inline;
 		self::include_js();
 	}
 	
@@ -102,8 +108,18 @@ class HtmlEditorField extends TextareaField {
 				'tinymce' => 'true',
 				'style'   => 'width: 97%; height: ' . ($this->rows * 16) . 'px', // prevents horizontal scrollbars
 				'value' => null,
+				'data-inline-config' => $this->inlineConfig()
 			)
 		);
+	}
+	
+	/**
+	 * llows to override the default/global ssTinyMceConfig JS var with an alternative inline JSON config.
+	 * 
+	 * @return mixed (string | null)
+	 */
+	public function inlineConfig() {
+		return $this->inline ? HtmlEditorConfig::get_active()->generateJS(true) : null;
 	}
 	
 	public function saveInto(DataObjectInterface $record) {
