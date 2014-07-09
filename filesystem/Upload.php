@@ -419,8 +419,10 @@ class Upload_Validator {
 	}
 	
 	/**
+	 *
 	 * Determines if the temporary file has a valid extension
 	 * An empty string in the validation map indicates files without an extension.
+	 *
 	 * @return boolean
 	 */
 	public function isValidExtension() {
@@ -433,7 +435,68 @@ class Upload_Validator {
 			return (!count($this->allowedExtensions)
 				|| in_array(strtolower($pathInfo['extension']), $this->allowedExtensions));
 		}
-	}	
+	}
+
+	/**
+	 *
+	 * Check if the current file being uploaded has a valid Mime-Type for its extension.
+	 * Relies on the availablity of the Unix `file` command so you should not rely on it
+	 * if your application can be hosted in non-Unix environments.
+	 *
+	 * Notice: This method does _not_ call {@link $this->isValidExtension()}.
+	 *
+	 * @return mixed (null | boolean) Boolean if
+	 * @todo Make use of {@link https://github.com/meerware/silverstripe-browser-information}?
+	 * @todo Add tests
+	 * @todo how to achive the equivalent of `file` on Windows?
+	 */
+	public function isValidMime() {
+		// escapeshellarg() returns a 2-char string for empty args
+		$filename = escapeshellarg($this->tmpFile['name']);
+		$pathInfo = pathinfo($this->tmpFile['name']);
+		$extension = isset($pathInfo['extension']) ? strtolower($pathInfo['extension']) : null;
+		if(!strlen($filename) >2 || !$extension) {
+			return;
+		}
+
+		// Run the Unix `file` command
+		$output = array();
+		$return = 0;
+		exec("file -I $filename", $output, $return);
+
+		// Munged filename or file returned nothing or possibly Unix `file` command not found
+		if($return !== 0 || !$output) {
+			return;
+		}
+
+		$parts = explode(' ', $output[0]);
+		// The mime should always be the second value
+		if(!isset($parts[1])) {
+			return;
+		}
+
+		$mimeType = rtrim($parts[1], ';');
+		return (boolean)$this->matchMimeToExt($extension, $mimeType);
+	}
+
+	/**
+	 *
+	 * Tries to locate $mimeType in framework's 'mimetypes.yml' config and checks
+	 * if $extension is associated with it. If the check fails, then there's a mime-to-extension
+	 * mismatch and we return false.
+	 *
+	 * @param string $extension
+	 * @param string $mime
+	 * @return boolean
+	 * @todo Add tests
+	 */
+	public function matchMimeToExt($extension, $mimeType) {
+		$httpMimeTypes = Config::inst()->get('HTTP', 'MimeTypes');
+		list($ext, $mime) = array(strtolower($extension), strtolower($mimeType));
+
+		$exists = isset($httpMimeTypes[$ext]);
+		return (boolean)($exists && $httpMimeTypes[$ext] === $mime);
+	}
 	
 	/**
 	 * Run through the rules for this validator checking against
@@ -470,6 +533,23 @@ class Upload_Validator {
 		if(!$this->isValidExtension()) {
 			$this->errors[] = _t(
 				'File.INVALIDEXTENSION', 
+				'Extension is not allowed (valid: {extensions})',
+				'Argument 1: Comma-separated list of valid extensions',
+				array('extensions' => wordwrap(implode(', ', $this->allowedExtensions)))
+			);
+			return false;
+		}
+
+		/* 
+		 * Mime-type validation
+		 * $this->isValidMime() relies on the Unix `file` command. If any part of
+		 * running it fails, $this->isValidMime() returns `null` meaning we cannot rely
+		 * on it and cannot validate using it.
+		 */
+		$validMime = $this->isValidMime();
+		if(is_bool($validMime) && $validMime !== true) {
+			$this->errors[] = _t(
+				'File.INVALIDEXTENSION',
 				'Extension is not allowed (valid: {extensions})',
 				'Argument 1: Comma-separated list of valid extensions',
 				array('extensions' => wordwrap(implode(', ', $this->allowedExtensions)))
