@@ -311,6 +311,36 @@ class ImageTest extends SapphireTest {
 			);
 		}
 	}
+	
+	public function testExists() {
+		$image = $this->objFromFixture('Image', 'imageWithTitle');
+		
+		/*
+		 * No f/s check:
+		 * - Image has DB record and an entry on the F/S
+		 */
+		$this->assertTrue($image->exists());
+		
+		/*
+		 * No f/s check:
+		 * - Image has DB record and NO entry on the F/S
+		 */
+		unlink($image->getFullPath());
+		$this->assertTrue($image->exists());
+		
+		/*
+		 * Yes f/s check: $fsCheck param passed to exists() method
+		 * - Image has DB record and an entry on the F/S
+		 */
+		$this->assertTrue($image->exists(true));
+		
+		/*
+		 * Yes f/s check: $fsCheck param passed to exists() method
+		 * - Image has DB record and an entry on the F/S
+		 */
+		unlink($image->getFullPath());
+		$this->assertFalse($image->exists(true));		
+	}
 
 	/**
 	 * @param bool $custom include methods added dynamically at runtime

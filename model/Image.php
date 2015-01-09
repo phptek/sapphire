@@ -123,15 +123,16 @@ class Image extends File implements Flushable {
 	}
 
 	/**
-	 * An image exists if it has a filename.
-	 * Does not do any filesystem checks.
+	 * An image exists if it has a filename. If the $fsCheck boolean is passed,
+	 * then a filesystem check is also performed.
 	 * 
+	 * @param boolean $fsCheck
 	 * @return boolean
 	 */
-	public function exists() {
-		if(isset($this->record["Filename"])) {
-			return true;
-		}		
+	public function exists($fsCheck = false) {
+		$recordExists = isset($this->record["Filename"]);
+		$fileExists = ($fsCheck ? file_exists($this->getFullPath()) : true);
+		return $recordExists && $fileExists;		
 	}
 	
 	/**
