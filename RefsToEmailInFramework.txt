@@ -1,0 +1,76 @@
+./tests/control/CMSProfileControllerTest.php:			'Email' => $member->Email,
+./tests/control/CMSProfileControllerTest.php:			'Email' => $member->Email,
+./tests/control/CMSProfileControllerTest.php:			'Email' => $member->Email,
+./tests/model/DataObjectTest.php:		$this->assertEquals('jim@example.com', $captain1->Email);
+./tests/security/MemberCsvBulkLoaderTest.php:		$this->assertEquals($created[0]->Email, 'author1@test.com');
+./tests/security/MemberCsvBulkLoaderTest.php:		$this->assertEquals($created[1]->Email, 'author2@test.com');
+./tests/security/MemberCsvBulkLoaderTest.php:		$author1->Email = 'author1@test.com';
+./tests/security/MemberCsvBulkLoaderTest.php:		$this->assertEquals($created[0]->Email, 'author2@test.com');
+./tests/security/MemberCsvBulkLoaderTest.php:		$this->assertEquals($updated[0]->Email, 'author1@test.com');
+./tests/security/MemberTest.php:		$m1->Email = 'member@test.com';
+./tests/security/MemberTest.php:		$m2->Email = 'member@test.com';
+./tests/security/MemberTest.php:		$m1->Email = 'member@test.com';
+./tests/security/MemberTest.php:		$m2->Email = 'member_new@test.com';
+./tests/security/MemberTest.php:		$m2->Email = 'member@test.com';
+./tests/security/MemberTest.php:		$response = $this->post('Security/LostPasswordForm', array('Email' => $member->Email));
+./tests/security/MemberTest.php:			'Email' => $memberA->Email
+./tests/security/MemberTest.php:			'Email' => $memberA->Email
+./tests/security/MemberTest.php:			'Email' => $memberB->Email
+./tests/security/MemberAuthenticatorTest.php:		$member->Email = 'test1@test.com';
+./tests/security/MemberAuthenticatorTest.php:		$this->assertEquals($result->Email, Security::default_admin_username());
+./tests/security/SecurityTest.php:		$this->assertEquals($attempt->Email, 'testuser@example.com');
+./tests/security/SecurityTest.php:		$this->assertEquals($attempt->Email, 'wronguser@silverstripe.com');
+./tests/security/SecurityTest.php:		$this->assertEquals($attempt->Email, 'testuser@example.com');
+./tests/security/SecurityDefaultAdminTest.php:		$this->assertEquals($admin->Email, Security::default_admin_username());
+./tests/security/SecurityDefaultAdminTest.php:		$this->assertEmpty($admin->Email);
+./tests/security/SecurityDefaultAdminTest.php:		$this->assertEquals($admin->Email, Security::default_admin_username());
+./security/MemberLoginForm.php:			$e->setTo($member->Email);
+./security/MemberAuthenticator.php:			if($member) $email = $member->Email;
+./security/MemberAuthenticator.php:		$attempt->Email = $email;
+./security/Member.php:			$admin->Email = Security::default_admin_username();
+./security/Member.php:		if($this->isDefaultAdmin() && Security::check_default_admin($this->Email, $password)) {
+./security/Member.php:			&& $this->Email === Security::default_admin_username();
+./security/Member.php:			$e->setTo($this->Email);
+./dev/SapphireTest.php:			$member->Email = "$permCode@example.org";
+./security/MemberLoginForm.php:				Session::set('SessionForms.MemberLoginForm.Email', $data['Email']);
+./security/MemberLoginForm.php:		if(empty($data['Email'])) {
+./security/MemberLoginForm.php:		$member = Member::get()->filter("Email", $data['Email'])->first();
+./security/MemberLoginForm.php:			$this->controller->redirect('Security/passwordsent/' . urlencode($data['Email']));
+./security/MemberLoginForm.php:		} elseif($data['Email']) {
+./security/MemberLoginForm.php:			$this->controller->redirect('Security/passwordsent/' . rawurlencode($data['Email']));
+./security/LoginAttempt.php:		$labels['Email'] = _t('LoginAttempt.Email', 'Email Address');
+./security/MemberAuthenticator.php:		if(!$member && !empty($data['Email'])) {
+./security/MemberAuthenticator.php:			$email = $data['Email'];
+./security/MemberAuthenticator.php:		$email = isset($data['Email']) ? $data['Email'] : null;
+./security/Member.php:		$labels['Email'] = _t('Member.EMAIL', 'Email');
+./tests/api/RestfulServiceTest.php:	protected $member_unique_identifier_field = '';
+./tests/api/RestfulServiceTest.php:		$this->member_unique_identifier_field = Member::config()->unique_identifier_field;
+./tests/api/RestfulServiceTest.php:		Member::config()->unique_identifier_field = 'Email';
+./tests/api/RestfulServiceTest.php:		// set old Member::config()->unique_identifier_field value
+./tests/api/RestfulServiceTest.php:		if ($this->member_unique_identifier_field) {
+./tests/api/RestfulServiceTest.php:			Member::config()->unique_identifier_field = $this->member_unique_identifier_field;
+./tests/security/MemberTest.php:		$this->orig['Member_unique_identifier_field'] = Member::config()->unique_identifier_field;
+./tests/security/MemberTest.php:		Member::config()->unique_identifier_field = 'Email';
+./tests/security/MemberTest.php:		Member::config()->unique_identifier_field = $this->orig['Member_unique_identifier_field'];
+./tests/security/MemberAuthenticatorTest.php:		$field=Member::config()->unique_identifier_field;
+./tests/security/MemberAuthenticatorTest.php:		$field=Member::config()->unique_identifier_field;
+./tests/security/MemberAuthenticatorTest.php:		$origField = Member::config()->unique_identifier_field;
+./tests/security/MemberAuthenticatorTest.php:		Member::config()->unique_identifier_field = 'Username';
+./tests/security/MemberAuthenticatorTest.php:		$label=singleton('Member')->fieldLabel(Member::config()->unique_identifier_field);
+./tests/security/MemberAuthenticatorTest.php:		Member::config()->unique_identifier_field = $origField;
+./tests/security/BasicAuthTest.php:	static $original_unique_identifier_field;
+./tests/security/BasicAuthTest.php:		Member::config()->unique_identifier_field = 'Email';
+./tests/security/SecurityTest.php:		$this->priorUniqueIdentifierField = Member::config()->unique_identifier_field;
+./tests/security/SecurityTest.php:		Member::config()->unique_identifier_field = 'Email';
+./tests/security/SecurityTest.php:		Member::config()->unique_identifier_field = $this->priorUniqueIdentifierField;
+./security/MemberLoginForm.php:				$label=singleton('Member')->fieldLabel(Member::config()->unique_identifier_field);
+./security/MemberAuthenticator.php:				->filter(Member::config()->unique_identifier_field, $email)
+./security/Member.php:	private static $unique_identifier_field = 'Email';
+./security/Member.php:	public static function get_unique_identifier_field() {
+./security/Member.php:		Deprecation::notice('4.0', 'Use the "Member.unique_identifier_field" config setting instead');
+./security/Member.php:		return Member::config()->unique_identifier_field;
+./security/Member.php:	public static function set_unique_identifier_field($field) {
+./security/Member.php:		Deprecation::notice('4.0', 'Use the "Member.unique_identifier_field" config setting instead');
+./security/Member.php:		Member::config()->unique_identifier_field = $field;
+./security/Member.php:		$identifierField = Member::config()->unique_identifier_field;
+./security/Member.php:		$identifierField = (string)Member::config()->unique_identifier_field;
