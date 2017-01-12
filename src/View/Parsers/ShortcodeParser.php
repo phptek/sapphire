@@ -175,9 +175,13 @@ class ShortcodeParser extends Object {
 	/**
 	 * @param DOMElement $new
 	 * @param DOMElement $after
+     * @return boolean
 	 */
 	protected function insertAfter($new, $after) {
-		$parent = $after->parentNode;
+		if (!$parent = $after->parentNode) {
+            return false;
+        }
+        
 		$next = $after->nextSibling;
 
 		if ($next) {
@@ -186,6 +190,8 @@ class ShortcodeParser extends Object {
 		else {
 			$parent->appendChild($new);
 		}
+        
+        return true;
 	}
 
 	/**
@@ -532,11 +538,11 @@ class ShortcodeParser extends Object {
 				/** @var DOMElement $spliter */
 				$spliter = $splitee->cloneNode(false);
 
-				$this->insertAfter($spliter, $splitee);
-
-				while($at->nextSibling) {
-					$spliter->appendChild($at->nextSibling);
-				}
+				if ($this->insertAfter($spliter, $splitee)) {
+                    while($at->nextSibling) {
+                        $spliter->appendChild($at->nextSibling);
+                    }
+                }
 
 				$at = $splitee; $splitee = $splitee->parentNode;
 			}
